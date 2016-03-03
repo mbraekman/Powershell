@@ -17,4 +17,3 @@ The script can be configured using the variables on the first 3 lines:
  - $Application:
    The name of the application for which the receive locations should be disabled
    i.e.  BizTalk Application 1
-

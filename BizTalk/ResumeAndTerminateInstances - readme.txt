@@ -14,4 +14,3 @@ This file is containing:
  - a list of applications, for which the check for suspended instances.
  - a list of ports, for which to check, based on the error-code, if the messages should be resumed.
  - a list of ports, for which to check if the messages should be terminated.
-

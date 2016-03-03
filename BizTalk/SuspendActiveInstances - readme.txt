@@ -12,4 +12,3 @@ The output of this script will be a log-file, indicating the amount of messages 
 Everything related to the configuration of this script is located in the 'BizTalkPowerShell.config'-file.
 This file is containing:
  - RunningTime: the time an instance is allowed to be active, before it being suspended.
-
