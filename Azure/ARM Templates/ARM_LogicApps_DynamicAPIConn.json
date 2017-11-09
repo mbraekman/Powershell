@@ -1,0 +1,254 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "connections_ThirdAPI_name": {
+            "defaultValue": "ThirdAPI",
+            "type": "String"
+        },
+        "connections_FirstAPI_name": {
+            "defaultValue": "FirstAPI",
+            "type": "String"
+        },
+        "connections_FifthAPI_name": {
+            "defaultValue": "FifthAPI",
+            "type": "String"
+        },
+        "connections_SecondAPI_name": {
+            "defaultValue": "SecondAPI",
+            "type": "String"
+        },
+        "connections_FourthAPI_name": {
+            "defaultValue": "FourthAPI",
+            "type": "String"
+        },
+        "connections_SixthAPI_name": {
+            "defaultValue": "SixthAPI",
+            "type": "String"
+        },
+        "workflows_APIConnection_name": {
+            "defaultValue": "APIConnection",
+            "type": "String"
+        },
+        "workflows_APIConnection_id": {
+            "defaultValue": "/subscriptions/e2368713-65c1-4311-8fd4-4b247db033d1/resourceGroups/LogicApps_APIConn_ARM/providers/Microsoft.Logic/integrationAccounts/IA_LogicApp_APIConnection",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "comments": "Generalized from resource: '/subscriptions/e2368713-65c1-4311-8fd4-4b247db033d1/resourceGroups/LogicApps_APIConn_ARM/providers/Microsoft.Logic/workflows/APIConnection'.",
+            "type": "Microsoft.Logic/workflows",
+            "name": "[parameters('workflows_APIConnection_name')]",
+            "apiVersion": "2016-06-01",
+            "location": "[resourceGroup().location]",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "state": "Enabled",
+                "integrationAccount": {
+                    "id": "[parameters('workflows_APIConnection_id')]"
+                },
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "manual": {
+                            "type": "Request",
+                            "kind": "Http",
+                            "inputs": {
+                                "method": "POST",
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "actions": {
+                        "Create_file": {
+                            "runAfter": {
+                                "Integration_Account_Artifact_Lookup": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "[parameters('workflows_APIConnection_name')]",
+                            "inputs": {
+                                "body": "@outputs('Integration_Account_Artifact_Lookup')['properties']['metadata']['ConnectionName']",
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')[outputs('Integration_Account_Artifact_Lookup')['properties']['metadata']['ConnectionName']]['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/datasets/default/files",
+                                "queries": {
+                                    "folderPath": "@outputs('Integration_Account_Artifact_Lookup')['properties']['metadata']['FtpFolder']",
+                                    "name": "@triggerOutputs()['headers']['FtpFileName']"
+                                }
+                            },
+                            "runtimeConfiguration": {
+                                "contentTransfer": {
+                                    "transferMode": "Chunked"
+                                }
+                            }
+                        },
+                        "Integration_Account_Artifact_Lookup": {
+                            "runAfter": {},
+                            "type": "IntegrationAccountArtifactLookup",
+                            "inputs": {
+                                "artifactName": "@triggerOutputs()['headers']['Partner']",
+                                "artifactType": "Partner"
+                            }
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "FifthAPI": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_FifthAPI_name'))]",
+                                "connectionName": "[parameters('connections_FifthAPI_name')]",
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/ftp')]"
+                            },
+                            "FirstAPI": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_FirstAPI_name'))]",
+                                "connectionName": "[parameters('connections_FirstAPI_name')]",
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/ftp')]"
+                            },
+                            "FourthAPI": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_FourthAPI_name'))]",
+                                "connectionName": "[parameters('connections_FourthAPI_name')]",
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/ftp')]"
+                            },
+                            "SecondAPI": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_SecondAPI_name'))]",
+                                "connectionName": "[parameters('connections_SecondAPI_name')]",
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/ftp')]"
+                            },
+                            "ThirdAPI": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_ThirdAPI_name'))]",
+                                "connectionName": "[parameters('connections_ThirdAPI_name')]",
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/ftp')]"
+                            },
+                            "SixthAPI": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_SixthAPI_name'))]",
+                                "connectionName": "[parameters('connections_SixthAPI_name')]",
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/ftp')]"
+                            }
+                        }
+                    }
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/connections', parameters('connections_FifthAPI_name'))]",
+                "[resourceId('Microsoft.Web/connections', parameters('connections_FirstAPI_name'))]",
+                "[resourceId('Microsoft.Web/connections', parameters('connections_FourthAPI_name'))]",
+                "[resourceId('Microsoft.Web/connections', parameters('connections_SecondAPI_name'))]",
+                "[resourceId('Microsoft.Web/connections', parameters('connections_ThirdAPI_name'))]",
+                "[resourceId('Microsoft.Web/connections', parameters('connections_SixthAPI_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/e2368713-65c1-4311-8fd4-4b247db033d1/resourceGroups/LogicApps_APIConn_ARM/providers/Microsoft.Web/connections/ThirdAPI'.",
+            "type": "Microsoft.Web/connections",
+            "name": "[parameters('connections_ThirdAPI_name')]",
+            "apiVersion": "2016-06-01",
+            "location": "southcentralus",
+            "scale": null,
+            "properties": {
+                "displayName": "[parameters('connections_ThirdAPI_name')]",
+                "customParameterValues": {},
+                "api": {
+                    "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/ftp')]"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/e2368713-65c1-4311-8fd4-4b247db033d1/resourceGroups/LogicApps_APIConn_ARM/providers/Microsoft.Web/connections/SecondAPI'.",
+            "type": "Microsoft.Web/connections",
+            "name": "[parameters('connections_SecondAPI_name')]",
+            "apiVersion": "2016-06-01",
+            "location": "southcentralus",
+            "scale": null,
+            "properties": {
+                "displayName": "[parameters('connections_SecondAPI_name')]",
+                "customParameterValues": {},
+                "api": {
+                    "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/ftp')]"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/e2368713-65c1-4311-8fd4-4b247db033d1/resourceGroups/LogicApps_APIConn_ARM/providers/Microsoft.Web/connections/FirstAPI'.",
+            "type": "Microsoft.Web/connections",
+            "name": "[parameters('connections_FirstAPI_name')]",
+            "apiVersion": "2016-06-01",
+            "location": "southcentralus",
+            "scale": null,
+            "properties": {
+                "displayName": "[parameters('connections_FirstAPI_name')]",
+                "customParameterValues": {},
+                "api": {
+                    "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/ftp')]"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/e2368713-65c1-4311-8fd4-4b247db033d1/resourceGroups/LogicApps_APIConn_ARM/providers/Microsoft.Web/connections/FifthAPI'.",
+            "type": "Microsoft.Web/connections",
+            "name": "[parameters('connections_FifthAPI_name')]",
+            "apiVersion": "2016-06-01",
+            "location": "southcentralus",
+            "scale": null,
+            "properties": {
+                "displayName": "[parameters('connections_FifthAPI_name')]",
+                "customParameterValues": {},
+                "api": {
+                    "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/ftp')]"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/e2368713-65c1-4311-8fd4-4b247db033d1/resourceGroups/LogicApps_APIConn_ARM/providers/Microsoft.Web/connections/FourthAPI'.",
+            "type": "Microsoft.Web/connections",
+            "name": "[parameters('connections_FourthAPI_name')]",
+            "apiVersion": "2016-06-01",
+            "location": "southcentralus",
+            "scale": null,
+            "properties": {
+                "displayName": "[parameters('connections_FourthAPI_name')]",
+                "customParameterValues": {},
+                "api": {
+                    "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/ftp')]"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/e2368713-65c1-4311-8fd4-4b247db033d1/resourceGroups/LogicApps_APIConn_ARM/providers/Microsoft.Web/connections/FourthAPI'.",
+            "type": "Microsoft.Web/connections",
+            "name": "[parameters('connections_SixthAPI_name')]",
+            "apiVersion": "2016-06-01",
+            "location": "southcentralus",
+            "scale": null,
+            "properties": {
+                "displayName": "[parameters('connections_SixthAPI_name')]",
+                "customParameterValues": {},
+                "api": {
+                    "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/ftp')]"
+                }
+            },
+            "dependsOn": []
+        }
+    ]
+}
