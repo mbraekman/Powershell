@@ -17,7 +17,8 @@ foreach($file in Get-ChildItem $sourceDirectory)
     Write-Host "[$counter/$sourceDirFileCount] $($file.FullName)"
     $filePath = $file.FullName
     $fileName = $file.Name
-    Copy-Item -Force $filePath -Destination $destinationDirectory/$fileName
-    $(Get-Item $file.Fullname).lastwritetime=$(Get-Date)
+    $outputFilePath = "$destinationDirectory/$fileName"
+    Copy-Item -Force $filePath -Destination $outputFilePath
+    $(Get-Item $outputFilePath).lastwritetime=$(Get-Date)
 
 }
