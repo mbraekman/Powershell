@@ -1,24 +1,26 @@
-﻿$resourceGroupName = "%ResourceGroupName%"
-$functionAppName = "%FunctionAppName%"
-$functionAppResourceGroupName = "%FunctionAppResourceGroupName%"
+﻿param (
+    [Parameter(Mandatory=$true)][string]$ResourceGroupName = $(throw "ResourceGroupName is required"),
+	[Parameter(Mandatory=$true)][string]$FunctionAppResourceGroupName = $(throw "FunctionAppResourceGroupName is required"),
+	[Parameter(Mandatory=$true)][string]$FunctionAppName = $(throw "FunctionAppName is required")
+)
 
-Write-Host "Assigning Contributor access for the FunctionApp to the resource group."
+Write-Host "Assigning Contributor-rights to the FunctionApp onto resource group '$ResourceGroupName'."
 
 try{
-    $funtionApp = Get-AzureRmResource -ResourceGroupName $functionAppResourceGroupName -Name $functionAppName
-    [guid]$flowhandlerJobPrincipalId = $funtionApp.identity.PrincipalId
-    New-AzureRmRoleAssignment -ObjectId $flowhandlerJobPrincipalId -RoleDefinitionName "Contributor" -ResourceGroupName $resourceGroupName
+    $functionApp = Get-AzureRmResource -ResourceGroupName $FunctionAppResourceGroupName -Name $FunctionAppName
+    [guid]$functionAppPrincipalId = $functionApp.identity.PrincipalId
+    New-AzureRmRoleAssignment -ObjectId $functionAppPrincipalId -RoleDefinitionName "Contributor" -ResourceGroupName $ResourceGroupName
 
     Write-Host "Contributor access granted!"
-}catch [Microsoft.Rest.Azure.CloudException]
-{
-    [Microsoft.Rest.Azure.CloudException]$cloudException = $_.Exception
-    Write-Warning "[CloudException] Failed to grant access!"
-    $ErrorMessage = $_.Exception.Message
-    Write-Warning "Error: $ErrorMessage"
 }catch
 {
-    Write-Warning "Failed to grant access!"
     $ErrorMessage = $_.Exception.Message
-    Write-Warning "Error: $ErrorMessage"
+    if($ErrorMessage.Contains("already exists"))
+    {
+        Write-Host "Access has already been granted"
+    }
+    else{
+        Write-Warning "Failed to grant access!"
+        Write-Host "Error: $ErrorMessage"
+    }
 }

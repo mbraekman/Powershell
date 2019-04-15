@@ -1,5 +1,7 @@
-﻿$resourceGroupName = "%ResourceGroupName%"
-$functionAppName = "%FunctionAppName%"
+﻿param (
+    [Parameter(Mandatory=$true)][string]$resourceGroupName = $(throw "ResourceGroupName is required"),
+	[Parameter(Mandatory=$true)][string]$functionAppName = $(throw "FunctionAppName is required")
+)
 
 Write-Host "Assigning Contributor access for the FlowHandlerJob to the resource group."
 
