@@ -8,9 +8,9 @@ $userObjectId = ''
 $keyVaultName = ''
 
 # Below permissions match the default "Key, Secret & Certificate Management"-template.
-[String[]] $persmissionsToSecrets = ("get","list","set","delete","recover","backup","restore")
+[String[]] $permissionsToSecrets = ("get","list","set","delete","recover","backup","restore")
 [String[]] $permissionsToKeys = ("get","list","update","create","import","delete","recover","backup","restore")
-[String[]] $persmissionsToCertificates = ("get","list","update","create","import","delete","recover","backup","restore","Managecontacts","Getissuers","Listissuers","Setissuers","Deleteissuers","Manageissuers","Purge")
+[String[]] $permissionsToCertificates = ("get","list","update","create","import","delete","recover","backup","restore","Managecontacts","Getissuers","Listissuers","Setissuers","Deleteissuers","Manageissuers","Purge")
 
 # Login to Azure
 Login-AzureRmAccount
@@ -19,7 +19,7 @@ Login-AzureRmAccount
 Select-AzureRmSubscription -SubscriptionId $subscriptionId
 
 try{
-    # Create an AccessPolicy for the specified user, with the specified permissions.
+    # Create/Update an AccessPolicy for the specified user, with the specified permissions.
     Set-AzureRmKeyVaultAccessPolicy -VaultName $keyVaultName -ObjectId $userObjectId -PermissionsToSecrets $permissionsToSecrets -PermissionsToKeys $permissionsToKeys -PermissionsToCertificates $permissionsToCertificates
     Write-Information "Access policy has been created."
 }
