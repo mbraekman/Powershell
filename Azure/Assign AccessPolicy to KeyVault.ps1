@@ -10,7 +10,7 @@ $keyVaultName = ''
 # Below permissions match the default "Key, Secret & Certificate Management"-template.
 [String[]] $permissionsToSecrets = ("get","list","set","delete","recover","backup","restore")
 [String[]] $permissionsToKeys = ("get","list","update","create","import","delete","recover","backup","restore")
-[String[]] $permissionsToCertificates = ("get","list","update","create","import","delete","recover","backup","restore","Managecontacts","Getissuers","Listissuers","Setissuers","Deleteissuers","Manageissuers","Purge")
+[String[]] $permissionsToCertificates = ("get","list","update","create","import","delete","recover","Managecontacts","Getissuers","Listissuers","Setissuers","Deleteissuers","Manageissuers","Purge")
 
 # Login to Azure
 Login-AzureRmAccount
