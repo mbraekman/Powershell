@@ -1,0 +1,15 @@
+This command can be used to start/stop a Data Factory-trigger.
+Since a Data Factory pipeline can only be updated if the trigger of the pipeline has been disabled, this script can be used before/after the update to stop/start the trigger.
+
+Parameters:
+	- Action
+		[Mandatory|string] Specify the action to perform: start | stop
+	- ResourceGroupName
+		[Mandatory|string] Specify the name of the Resource Group in which the Data Factory has been created.
+	- DataFactoryName
+		[Mandatory|string] Specify the name of the Data Factory that contains the pipeline(-trigger)
+	- DataFactoryTriggerName
+		[Mandatory|string] Specify the name of the Data Factory Pipeline trigger which is to be started/stopped.
+	- FailWhenTriggerIsNotFound
+		[Optional|switch] If added, the script will not fail in case the trigger cannot be found.
+		Can be used for the initial deployment of the Data Factory Pipeline(/trigger) in combination with the 'stop'-action.
