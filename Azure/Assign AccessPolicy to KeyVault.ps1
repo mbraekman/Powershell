@@ -20,7 +20,7 @@ Select-AzureRmSubscription -SubscriptionId $subscriptionId
 
 try{
     # Create/Update an AccessPolicy for the specified user, with the specified permissions.
-    Set-AzureRmKeyVaultAccessPolicy -VaultName $keyVaultName -ObjectId $userObjectId -PermissionsToSecrets $permissionsToSecrets -PermissionsToKeys $permissionsToKeys -PermissionsToCertificates $permissionsToCertificates
+    Set-AzureRmKeyVaultAccessPolicy -VaultName $keyVaultName -ObjectId $userObjectId -PermissionsToSecrets $permissionsToSecrets -PermissionsToKeys $permissionsToKeys -PermissionsToCertificates $permissionsToCertificates -BypassObjectIdValidation
     Write-Information "Access policy has been created."
 }
 catch
