@@ -20,7 +20,7 @@ try{
     $ctx=(Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccName).Context  
 
     ## Create directory  
-    Get-AzStorageShare -Context $ctx -Name $fileShareName | New-AzStorageDirectory -Path $directoryPath -ErrorAction Stop
+    Get-AzStorageShare -Context $ctx -Name $fileShareName | New-AzStorageDirectory -Path $FolderName -ErrorAction Stop
 
     Write-Host -ForegroundColor Green "Directory has been created.."  
 }
