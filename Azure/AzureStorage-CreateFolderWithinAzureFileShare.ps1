@@ -20,9 +20,20 @@ try{
     $ctx=(Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccName).Context  
 
     ## Create directory  
-    Get-AzStorageShare -Context $ctx -Name $fileShareName | New-AzStorageDirectory -Path $directoryPath  
+    Get-AzStorageShare -Context $ctx -Name $fileShareName | New-AzStorageDirectory -Path $directoryPath -ErrorAction Stop
 
     Write-Host -ForegroundColor Green "Directory has been created.."  
+}
+catch [Microsoft.Azure.Storage.StorageException]
+{
+    if($Error[0].Exception.Message -like "*already exists*")
+    {
+        Write-Host -ForegroundColor Yellow "The specified folder already exists."
+    }
+    else
+    {
+        throw
+    }
 }
 catch
 {
@@ -30,3 +41,4 @@ catch
     Write-Error "Failed to create the directory '$FolderName' in file-share '$FileShareName'. Reason: $ErrorMessage"
     return $null
 }
+
