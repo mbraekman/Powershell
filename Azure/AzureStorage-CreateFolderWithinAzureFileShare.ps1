@@ -1,0 +1,32 @@
+﻿param
+(
+    [Parameter(Mandatory)]
+    [String]$ResourceGroupName,
+
+    [Parameter(Mandatory)]
+    [String]$StorageAccountName,
+
+    [Parameter(Mandatory)]
+    [String]$FileShareName,
+
+    [Parameter(Mandatory)]
+    [String]$FolderName
+)
+
+try{
+    Write-Host -ForegroundColor Green "Creating directory in file share.."    
+
+    ## Get the storage account context  
+    $ctx=(Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccName).Context  
+
+    ## Create directory  
+    Get-AzStorageShare -Context $ctx -Name $fileShareName | New-AzStorageDirectory -Path $directoryPath  
+
+    Write-Host -ForegroundColor Green "Directory has been created.."  
+}
+catch
+{
+    $ErrorMessage = $_.Exception.Message
+    Write-Error "Failed to create the directory '$FolderName' in file-share '$FileShareName'. Reason: $ErrorMessage"
+    return $null
+}
