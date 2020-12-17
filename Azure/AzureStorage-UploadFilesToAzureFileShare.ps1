@@ -15,39 +15,59 @@
     [Parameter(Mandatory)]
     [String]$SourceFolderPath,
 
-    [Parameter(Optional)]
+    [Parameter()]
     [String]$FileMask = ""
 )
+
+function VerifyAzureFileShareExists 
+{
+    try{
+        $fileShare=Get-AzStorageShare -Context $ctx -Name $FileShareName -ErrorAction Stop 
+        return $true
+    }
+    catch [Microsoft.Azure.Storage.StorageException]
+    {
+        if($Error[0].Exception.Message -like "*does not exist*")
+        {
+            Write-Host -ForegroundColor Red "The given file-share '$FileShareName' does not seem to exist in storage account '$StorageAccountName'."
+            Write-Error "The given file-share '$FileShareName' does not seem to exist in storage account '$StorageAccountName'."
+            return $false
+        }
+        else
+        {
+            throw
+        }
+    }
+}
+
 
 try{
     Write-Host -ForegroundColor Green "Upload files to file share.."   
     
     ## Get the storage account context  
-    $ctx=(Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccName).Context  
+    $ctx=(Get-AzStorageAccount -ResourceGroupName $ResourceGroupName -Name $StorageAccountName).Context  
     
     ## Get the file share  
-    $fileShare=Get-AZStorageShare -Context $ctx -Name $fileShareName 
-      
-    ## Loop all files in the source-folder
-    foreach($file in Get-ChildItem ("$SourceFolderPath") -File)
+    if(VerifyAzureFileShareExists)
     {
-        ## Does the file match the FileMask
-        if($file.Name.EndsWith($FileMask,"CurrentCultureIgnoreCase"))
+        ## Loop all files in the source-folder
+        foreach($file in Get-ChildItem ("$SourceFolderPath") -File)
         {
-            ## Upload the file  
-            Set-AzStorageFileContent -Share $fileShare -Source $file.FullName -Path $directoryPath -Force 
-            Write-Host -ForegroundColor Green "Uploaded the file to File Share: " $($file.Name)
+            ## Does the file match the FileMask
+            if($file.Name.EndsWith($FileMask,"CurrentCultureIgnoreCase"))
+            {
+                ## Upload the file  
+                Set-AzStorageFileContent -Context $ctx -ShareName $FileShareName -Source $file.FullName -Path $DestinationFolderName -Force 
+                Write-Host -ForegroundColor Green "Uploaded the file to File Share: " $($file.Name)
+            }
         }
+
+        Write-Host -ForegroundColor Green "Files have been uploaded.." 
     }
-
-    ## Upload the file  
-    Set-AzStorageFileContent -Share $fileShare -Source $fileName -Path $directoryPath -Force 
-
-    Write-Host -ForegroundColor Green "Files have been uploaded.." 
 }
 catch
 {
     $ErrorMessage = $_.Exception.Message
-    Write-Error "Failed to upload files to directory '$FolderName' in file-share '$FileShareName'. Reason: $ErrorMessage"
+    Write-Error "Failed to upload files to directory '$DestinationFolderName' in file-share '$FileShareName'. Reason: $ErrorMessage"
     return $null
 }
