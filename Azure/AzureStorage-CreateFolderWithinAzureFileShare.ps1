@@ -17,10 +17,10 @@ try{
     Write-Host -ForegroundColor Green "Creating directory in file share.."    
 
     ## Get the storage account context  
-    $ctx=(Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccName).Context  
+    $ctx=(Get-AzStorageAccount -ResourceGroupName $ResourceGroupName -Name $StorageAccountName).Context  
 
     ## Create directory  
-    Get-AzStorageShare -Context $ctx -Name $fileShareName | New-AzStorageDirectory -Path $FolderName -ErrorAction Stop
+    Get-AzStorageShare -Context $ctx -Name $FileShareName | New-AzStorageDirectory -Path $FolderName -ErrorAction Stop
 
     Write-Host -ForegroundColor Green "Directory has been created.."  
 }
