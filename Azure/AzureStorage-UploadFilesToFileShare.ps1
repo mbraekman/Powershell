@@ -15,7 +15,7 @@
     [Parameter(Mandatory)]
     [String]$SourceFolderPath,
 
-    [Parameter(Optional)]
+    [Parameter()]
     [String]$FileMask = ""
 )
 
