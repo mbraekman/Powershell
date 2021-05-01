@@ -1,0 +1,22 @@
+[
+	{
+		"firstName": "John",
+		"lastName": "Doe",
+		"mailAddress": "john.doe@company.com",
+		"receiveNotifications": true,
+		"confirmationType": "invite",
+		"portalVersion": "legacy",
+		"note": "This is an optional note.",
+		"subscriptions": [
+			{
+				"displayName": "",
+				"name": "",
+				"scope": {
+					"type": "product",
+					"name": "Starter"
+				},
+				"allowTracing": true
+			}
+		]
+	}
+]
