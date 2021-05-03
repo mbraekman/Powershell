@@ -110,12 +110,34 @@ try
             ### In case the actual setup should strictly follow the provided config, remove those subscriptions which are no longer referenced in the config.
             if($StrictlyFollowConfig)
             {
-                ## TO DO
+                Write-Host "Checking existing subscriptions and remove those not present in the configuration."
+                
                 # List all current subscriptions
+                $fullListSubscriptionsUrl = "https://management.azure.com/subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.ApiManagement/service/$ServiceName/users/$userId/subscriptions?api-version=$ApiVersion"
+                
+                $params = @{
+                    Method = 'Get'
+                    Headers = @{ 
+	                    'authorization'="Bearer $AccessToken"
+                    }
+                    URI = $fullListSubscriptionsUrl
+                }
+
+                $currentSubscriptionsResponse = Invoke-WebRequest @params -ErrorAction Stop
+                $currentSubscriptions = ConvertFrom-Json $currentSubscriptionsResponse
+
                 # compare to configuration
                 # if not present in configuration -> remove
                 # if present in configuration -> update -> done below
                 # if present in configuration, but doesn't exist in the list -> create new subscription -> done below
+
+                $currentSubscriptions.Value | ForEach-Object {
+                    $existingSubscription =$_;
+
+                    Write-Host $existingSubscription
+
+                    ## TO DO
+                }
             }
 
 
