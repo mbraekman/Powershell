@@ -96,6 +96,8 @@ try
             Write-Host "Since no password was provided, one has been generated. Please advice the user to change this password the first time logging in."
         }
     }
+
+    return $UserId
 }
 catch {
     Write-Warning "Failed to create an account for the $FirstName $LastName ($MailAddress) for the developer portal of APIM instance $ServiceName"

@@ -1,10 +1,11 @@
 ﻿param(
     [string][Parameter(mandatory = $true)] $UsersConfigurationPath = $(throw "Make sure to provide the file path to the configuration file about the users and their subscriptions."),
     [string][Parameter(Mandatory = $true)] $ResourceGroupName = $(throw "Resource group name is required"),
-    [string][parameter(Mandatory = $true)] $ServiceName = $(throw "API managgement service name is required"),
+    [string][parameter(Mandatory = $true)] $ServiceName = $(throw "API management service name is required"),
     [string][parameter(Mandatory = $false)] $ApiVersion = "2019-12-01",
     [string][parameter(Mandatory = $false)] $SubscriptionId,
-    [string][parameter(Mandatory = $false)] $AccessToken
+    [string][parameter(Mandatory = $false)] $AccessToken,
+    [switch][parameter(Mandatory = $false)] $StrictlyFollowConfig = $false
 )
 
 try
@@ -22,6 +23,7 @@ try
             $SubscriptionId = $token.SubscriptionId
         }
 
+        ### Users
         $usersConfiguration | ForEach-Object {
             $user = $_;
 
@@ -43,8 +45,68 @@ try
                 AccessToken = $AccessToken
             }
 
-            .\APIM-InviteUserToDevPortal.ps1 @userParams
+            $userId = .\APIM-InviteUserToDevPortal.ps1 @userParams
             
+            ### Groups
+            ### In case the actual setup should strictly follow the provided config, remove the references first
+            if($StrictlyFollowConfig)
+            {
+                .\APIM-RemoveUserFromGroups.ps1 -ResourceGroupName $ResourceGroupName -ServiceName $ServiceName -UserId $userId -ApiVersion $ApiVersion -SubscriptionId $SubscriptionId -AccessToken $AccessToken
+            }
+
+
+            ### Exclude system-groups since memberships cannot be changed
+            $user.groups | Where-Object {$_.type -ne "system"} | ForEach-Object {
+                try
+                {
+                    $group = $_;
+                    
+                    Write-Host("====================================")
+                    Write-Host("Processing configuration for group $($group.displayName)")
+
+                    $groupParams = @{
+                        ResourceGroupName = $ResourceGroupName
+                        ServiceName = $ServiceName 
+                        DisplayName = $group.displayName
+                        ApiVersion = $ApiVersion 
+                        SubscriptionId = $SubscriptionId 
+                        AccessToken = $AccessToken
+                    }
+
+                    if($group.id -ne ''){
+                        $groupParams.GroupId = $group.id
+                    }
+                    if($group.type -ne ''){
+                        $groupParams.GroupType = $group.type
+                    }
+                    if($group.description -ne ''){
+                        $groupParams.Description = $group.description
+                    }
+
+                    $groupId = .\APIM-CreateDevPortalGroup.ps1 @groupParams
+
+                    ## Add the user to this group
+                    $groupUserParams = @{
+                        ResourceGroupName = $ResourceGroupName
+                        ServiceName = $ServiceName 
+                        GroupId = $groupId
+                        UserId = $userId
+                        ApiVersion = $ApiVersion 
+                        SubscriptionId = $SubscriptionId 
+                        AccessToken = $AccessToken
+                    }
+
+                    .\APIM-LinkUserToGroupDevPortal.ps1 @groupUserParams
+                }
+                catch
+                {
+                    $ErrorMessage = $_.Exception.Message
+                    Write-Warning "Error: $ErrorMessage"
+                    Write-Error "Failed to process the configuration for group $($group.displayName) for $($user.firstName) $($user.lastName)"
+                }
+            }
+
+            ### Subscriptions
             $user.subscriptions | ForEach-Object {
                 try
                 {

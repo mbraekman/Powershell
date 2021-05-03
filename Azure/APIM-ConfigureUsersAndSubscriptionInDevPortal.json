@@ -2,11 +2,19 @@
 	{
 		"firstName": "John",
 		"lastName": "Doe",
-		"mailAddress": "john.doe@company.com",
+		"mailAddress": "maxim.braekman@telenet.be",
 		"receiveNotifications": true,
 		"confirmationType": "invite",
 		"portalVersion": "legacy",
 		"note": "This is an optional note.",
+		"groups": [
+			{
+				"id": "partner-123456-catalog",
+				"displayName": "Partner - 123456 (Catalog)",
+				"type":"custom",
+				"description": "This is my description"
+			}
+		],
 		"subscriptions": [
 			{
 				"displayName": "",
