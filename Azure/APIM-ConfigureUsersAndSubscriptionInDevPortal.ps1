@@ -107,6 +107,18 @@ try
             }
 
             ### Subscriptions
+            ### In case the actual setup should strictly follow the provided config, remove those subscriptions which are no longer referenced in the config.
+            if($StrictlyFollowConfig)
+            {
+                ## TO DO
+                # List all current subscriptions
+                # compare to configuration
+                # if not present in configuration -> remove
+                # if present in configuration -> update -> done below
+                # if present in configuration, but doesn't exist in the list -> create new subscription -> done below
+            }
+
+
             $user.subscriptions | ForEach-Object {
                 try
                 {
