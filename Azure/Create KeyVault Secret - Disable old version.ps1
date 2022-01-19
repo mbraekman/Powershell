@@ -15,7 +15,7 @@ if($ResourceGroupName -eq '') {
 }
 
 # Get all current versions of the secret
-$secretVersions = Get-AzKeyVaultSecret -VaultName $KeyVaultName -Name $SecretName -IncludeVersions
+$secretVersions = Get-AzKeyVaultSecret -VaultName $KeyVaultName -Name $SecretName -IncludeVersions | Where-Object {$_.Enabled}
 
 Foreach ($secret in $SecretVersions)
 {
