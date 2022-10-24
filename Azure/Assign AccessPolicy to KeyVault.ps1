@@ -1,3 +1,6 @@
+# The ID of the tenant in which the keyVault is located
+$tenantId = ''
+
 # The ID of the subscription in which the keyVault is located
 $subscriptionId = ''
 
@@ -13,14 +16,14 @@ $keyVaultName = ''
 [String[]] $permissionsToCertificates = ("get","list","update","create","import","delete","recover","Managecontacts","Getissuers","Listissuers","Setissuers","Deleteissuers","Manageissuers","Purge")
 
 # Login to Azure
-Login-AzureRmAccount
+Login-AzAccount -SubscriptionId $subscriptionId -TenantId $tenantId
 
 # Select the correct subscription
-Select-AzureRmSubscription -SubscriptionId $subscriptionId
+Set-AzContext -SubscriptionId $subscriptionId -TenantId $tenantId
 
 try{
     # Create/Update an AccessPolicy for the specified user, with the specified permissions.
-    Set-AzureRmKeyVaultAccessPolicy -VaultName $keyVaultName -ObjectId $userObjectId -PermissionsToSecrets $permissionsToSecrets -PermissionsToKeys $permissionsToKeys -PermissionsToCertificates $permissionsToCertificates -BypassObjectIdValidation
+    Set-AzKeyVaultAccessPolicy -VaultName $keyVaultName -ObjectId $userObjectId -PermissionsToSecrets $permissionsToSecrets -PermissionsToKeys $permissionsToKeys -PermissionsToCertificates $permissionsToCertificates -BypassObjectIdValidation
     Write-Information "Access policy has been created."
 }
 catch
